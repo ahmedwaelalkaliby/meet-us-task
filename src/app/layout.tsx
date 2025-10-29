@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ABeeZee } from "next/font/google";
+import { Toaster } from "sonner";
 
 import "./globals.css";
 
@@ -21,7 +22,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`abeezee.className antialiased`}>{children}</body>
+      <body className={`abeezee.className antialiased`}>
+        {children}
+        <Toaster richColors position="top-center" />
+      </body>
     </html>
   );
 }
