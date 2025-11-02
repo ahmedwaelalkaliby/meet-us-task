@@ -69,7 +69,7 @@ Install dependencies and start the development server:
 * `npm install`
 * `npm run dev`
 
-The project will run locally at **[http://localhost:3000](http://localhost:3000)**
+you can reach the page on this link (" https://meet-us-task-umber.vercel.app/ ")
 
 ---
 
