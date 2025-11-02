@@ -17,7 +17,7 @@ export default function LogoutButton() {
       router.push("/login");
       router.refresh();
     } catch (error) {
-      // Error handling is done in the slice
+      
     }
   };
 
