@@ -1,12 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { redirect } from 'next/navigation';
-
-interface User {
-  name: string;
-  id: string;
-}
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useDispatch, useSelector } from 'react-redux';
+import { getUserData } from '@/redux/slices/authSlice';
+import { type RootState, type AppDispatch } from '@/redux/store';
+import { toast } from 'sonner';
 
 interface UserDataProps {
   token: string;
@@ -14,29 +13,37 @@ interface UserDataProps {
 }
 
 export default function UserData({ token, baseUrl }: UserDataProps) {
-  const [user, setUser] = useState<User | null>(null);
+  const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
+  const { user, loading, error } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     const fetchUser = async () => {
-      const res = await fetch(`${baseUrl}/api/auth/user`, {
-        headers: { Cookie: `token=${token}` },
-        cache: "no-store",
-      });
-      console.log(res);
-
-      if (res.status === 401) {
-        redirect("/login");
+      try {
+        await dispatch(getUserData({ token, baseUrl })).unwrap();
+      } catch (error) {
+        if (error === 'Unauthorized') {
+          toast.error('Session expired. Please login again.');
+          router.push('/login');
+        } else {
+          toast.error(error as string || 'Failed to fetch user data');
+        }
       }
-
-      const userData = await res.json();
-      setUser(userData);
     };
 
     fetchUser();
-  }, [token, baseUrl]);
+  }, [dispatch, token, baseUrl, router]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return null;
+  }
 
   if (!user) {
-    return <div>Loading...</div>;
+    return null;
   }
 
   return (

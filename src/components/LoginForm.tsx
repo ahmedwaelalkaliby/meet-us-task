@@ -6,9 +6,11 @@ import { MailIcon } from "@/components/icons/MailIcon";
 import { LockIcon } from "@/components/icons/LockIcon";
 import Button from "@/components/LoginButton";
 import Input from "@/components/LoginFormInput";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "@/redux/slices/authSlice";
+import { type RootState, type AppDispatch } from "@/redux/store";
 
 const schema = yup.object().shape({
   email: yup.string().email("Invalid email").required("Email is required"),
@@ -19,8 +21,9 @@ const schema = yup.object().shape({
 });
 
 export default function LoginForm() {
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
+  const { loading, error } = useSelector((state: RootState) => state.auth);
 
   const {
     register,
@@ -29,26 +32,12 @@ export default function LoginForm() {
   } = useForm({ resolver: yupResolver(schema) });
 
   const onSubmit = async (data: { email: string; password: string }) => {
-    setIsLoading(true);
     try {
-      const res = await fetch(`/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      const result = await res.json();
-
-      if (res.ok && result.success) {
-        toast.success("Login successful!");
-        router.push("/dashboard");
-      } else {
-        toast.error(result.message || "Invalid email or password");
-      }
-    } catch (err) {
-      toast.error("Something went wrong. Please try again.");
-    } finally {
-      setIsLoading(false);
+      await dispatch(loginUser(data)).unwrap();
+      toast.success("Login successful!");
+      router.push("/dashboard");
+    } catch (error) {
+      // Error is handled by the slice and shown via toast
     }
   };
 
@@ -103,9 +92,9 @@ export default function LoginForm() {
 
       <Button
         type="submit"
-        disabled={isLoading || Boolean(errors.email || errors.password)}
+        disabled={loading || Boolean(errors.email || errors.password)}
       >
-        {isLoading ? "Logging in..." : "Login"}
+        {loading ? "Logging in..." : "Login"}
       </Button>
       <p className="text-[#62616b] text-sm text-center">
         Don't have an account?{" "}

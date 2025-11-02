@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { ABeeZee } from "next/font/google";
 import { Toaster } from "sonner";
-
+import { ReduxProvider } from "@/redux/provider";
 import "./globals.css";
 
 const abeezee = ABeeZee({
@@ -22,9 +22,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`abeezee.className antialiased`}>
-        {children}
-        <Toaster richColors position="top-center" />
+      <body className={`${abeezee.className} antialiased`}>
+        <ReduxProvider>
+          {children}
+          <Toaster richColors position="top-center" />
+        </ReduxProvider>
       </body>
     </html>
   );
