@@ -1,15 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "@/redux/slices/authSlice";
 import { toast } from "sonner";
-import { type RootState } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 
 export default function LogoutButton() {
   const router = useRouter();
-  const dispatch = useDispatch();
-  const { loading } = useSelector((state: RootState) => state.auth);
+  const dispatch = useAppDispatch();
+  const { loading } = useAppSelector((state) => state.auth);
 
   const handleLogout = async () => {
     try {

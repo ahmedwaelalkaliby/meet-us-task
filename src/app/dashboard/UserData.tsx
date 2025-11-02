@@ -2,9 +2,8 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useDispatch, useSelector } from 'react-redux';
 import { getUserData } from '@/redux/slices/authSlice';
-import { type RootState, type AppDispatch } from '@/redux/store';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { toast } from 'sonner';
 
 interface UserDataProps {
@@ -13,9 +12,9 @@ interface UserDataProps {
 }
 
 export default function UserData({ token, baseUrl }: UserDataProps) {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const router = useRouter();
-  const { user, loading, error } = useSelector((state: RootState) => state.auth);
+  const { user, loading, error } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
     const fetchUser = async () => {
